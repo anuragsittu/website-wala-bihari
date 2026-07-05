@@ -5,6 +5,8 @@ import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Process from "@/components/home/Process";
 import Pricing from "@/components/home/Pricing";
 import StartProject from "@/components/home/StartProject";
+import FAQ from "@/components/home/FAQ";
+import Footer from "@/components/layout/Footer";
 
 export default function Home() {
   return (
@@ -16,6 +18,8 @@ export default function Home() {
       <Process />
       <Pricing />
       <StartProject />
+      <FAQ />
+      <Footer />
     </>
   );
 }
