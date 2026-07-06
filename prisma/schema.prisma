@@ -1,0 +1,150 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  ADMIN
+}
+
+enum ProjectStatus {
+  PENDING
+  QUOTE_SENT
+  APPROVED
+  IN_PROGRESS
+  REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  ADVANCE_PAID
+  PARTIALLY_PAID
+  PAID
+  REFUNDED
+}
+
+enum FileType {
+  IMAGE
+  PDF
+  ZIP
+  DOCUMENT
+  SOURCE_CODE
+  INVOICE
+}
+
+enum NotificationType {
+  PROJECT_CREATED
+  QUOTE_SENT
+  PAYMENT_RECEIVED
+  PROJECT_STARTED
+  PROJECT_UPDATED
+  PROJECT_COMPLETED
+  MESSAGE_RECEIVED
+}
+
+model User {
+  id            String          @id @default(cuid())
+  name          String
+  email         String          @unique
+  password      String
+  phone         String?
+  role          Role            @default(CLIENT)
+
+  projects      Project[]
+  notifications Notification[]
+  messages      Message[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Project {
+  id          String          @id @default(cuid())
+  title       String
+  description String
+  budget      Float?
+  deadline    DateTime?
+  status      ProjectStatus   @default(PENDING)
+
+  clientId    String
+  client      User            @relation(fields: [clientId], references: [id])
+
+  quotation   Quotation?
+  payments    Payment[]
+  files       ProjectFile[]
+  messages    Message[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Quotation {
+  id           String   @id @default(cuid())
+  price        Float
+  estimatedDays Int
+  notes        String?
+
+  accepted     Boolean  @default(false)
+
+  projectId    String    @unique
+  project      Project   @relation(fields: [projectId], references: [id])
+
+  createdAt    DateTime @default(now())
+}
+
+model Payment {
+  id         String         @id @default(cuid())
+  amount     Float
+  status     PaymentStatus  @default(PENDING)
+  transactionId String?
+
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
+
+model ProjectFile {
+  id          String   @id @default(cuid())
+  fileName    String
+  fileUrl     String
+  fileType    FileType
+
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id])
+
+  uploadedAt  DateTime @default(now())
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  content     String
+
+  senderId    String
+  sender      User @relation(fields: [senderId], references: [id])
+
+  projectId   String
+  project     Project @relation(fields: [projectId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+
+model Notification {
+  id          String             @id @default(cuid())
+  title       String
+  message     String
+  type        NotificationType
+  isRead      Boolean @default(false)
+
+  userId      String
+  user        User @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime @default(now())
+}
