@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { signIn } from "next-auth/react";
 
 function LoginForm() {
@@ -118,6 +119,7 @@ export default function LoginPage() {
         <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-blue-50 to-white px-6">
           <div className="text-center">
             <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+
             <p className="mt-4 text-sm text-slate-600">
               Loading login...
             </p>
