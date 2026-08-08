@@ -1,4 +1,7 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+
 import {
   FolderKanban,
   CreditCard,
@@ -9,16 +12,47 @@ import {
 import StatCard from "@/components/dashboard/StatCard";
 
 export default async function DashboardPage() {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const userId = session.user.id;
+
   const [
     projects,
     quotations,
     payments,
     notifications,
   ] = await Promise.all([
-    prisma.project.count(),
-    prisma.quotation.count(),
-    prisma.payment.count(),
-    prisma.notification.count(),
+    prisma.project.count({
+      where: {
+        clientId: userId,
+      },
+    }),
+
+    prisma.quotation.count({
+      where: {
+        project: {
+          clientId: userId,
+        },
+      },
+    }),
+
+    prisma.payment.count({
+      where: {
+        project: {
+          clientId: userId,
+        },
+      },
+    }),
+
+    prisma.notification.count({
+      where: {
+        userId,
+      },
+    }),
   ]);
 
   return (

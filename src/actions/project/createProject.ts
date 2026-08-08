@@ -1,12 +1,25 @@
 "use server";
 
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { projectSchema } from "@/validations/project";
 
 export async function createProject(formData: unknown) {
   try {
+    // Check authentication
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        message: "Please login before creating a project.",
+      };
+    }
+
+    // Validate form data
     const data = projectSchema.parse(formData);
 
+    // Find latest project code
     const latestProject = await prisma.project.findFirst({
       orderBy: {
         createdAt: "desc",
@@ -21,40 +34,43 @@ export async function createProject(formData: unknown) {
     let nextNumber = 1;
 
     if (latestProject?.projectCode) {
-      const parts = latestProject.projectCode.split("-");
+      const lastNumber = Number(
+        latestProject.projectCode.split("-")[2]
+      );
 
-      if (parts.length === 3) {
-        const last = Number(parts[2]);
-
-        if (!Number.isNaN(last)) {
-          nextNumber = last + 1;
-        }
+      if (!Number.isNaN(lastNumber)) {
+        nextNumber = lastNumber + 1;
       }
     }
 
-    const projectCode = `WWB-${year}-${String(nextNumber).padStart(4, "0")}`;
+    const projectCode = `WWB-${year}-${String(nextNumber).padStart(
+      4,
+      "0"
+    )}`;
 
+    // Create project linked to logged-in user
     const project = await prisma.project.create({
       data: {
         projectCode,
 
-        title: data.projectTitle.trim(),
+        title: data.projectTitle,
 
-        description: data.description.trim(),
+        description: data.description,
 
         category: data.websiteType,
 
-        budget: Number(data.budget.replace(/[^\d]/g, "")) || null,
+        customerName: data.fullName,
 
-        timeline: data.timeline,
+        customerEmail: data.email.toLowerCase(),
 
-        customerName: data.fullName.trim(),
+        customerPhone: data.phone,
 
-        customerEmail: data.email.toLowerCase().trim(),
+        company: data.company || null,
 
-        customerPhone: data.phone.trim(),
+        budget:
+          Number(data.budget.replace(/[^\d]/g, "")) || null,
 
-        company: data.company?.trim() || null,
+        clientId: session.user.id,
 
         status: "PENDING",
       },
@@ -71,7 +87,7 @@ export async function createProject(formData: unknown) {
 
     return {
       success: false,
-      message: "Unable to submit project.",
+      message: "Unable to submit project. Please try again.",
     };
   }
 }

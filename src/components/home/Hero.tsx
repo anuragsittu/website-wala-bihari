@@ -27,11 +27,11 @@ export default function Hero() {
         {/* CTA Buttons */}
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
-            href="#start-project"
-            className="rounded-xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition hover:bg-blue-700"
-          >
-            🚀 Start Your Project
-          </Link>
+  href="/project-request"
+  className="rounded-xl bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition hover:bg-blue-700"
+>
+  🚀 Start Your Project
+</Link>
 
           <Link
             href="#services"

@@ -28,6 +28,9 @@ export default async function ProjectsPage() {
 
   // Get projects linked to user OR submitted using same email
 const projects = await prisma.project.findMany({
+  where: {
+    clientId: user.id,
+  },
   orderBy: {
     createdAt: "desc",
   },
@@ -48,7 +51,7 @@ const projects = await prisma.project.findMany({
         </div>
 
         <Link
-          href="/#start-project"
+          href="/project-request"
           className="rounded-xl bg-blue-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
         >
           + Start New Project
@@ -67,12 +70,12 @@ const projects = await prisma.project.findMany({
               You haven't submitted any projects yet.
             </p>
 
-            <Link
-              href="/#start-project"
-              className="mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white"
-            >
-              Start Your First Project
-            </Link>
+           <Link
+              href="/project-request"
+              className="rounded-xl bg-blue-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-blue-700"
+  >
+            + Start New Project
+          </Link>
           </div>
         ) : (
           projects.map((project) => (

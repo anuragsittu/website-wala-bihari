@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -11,9 +12,11 @@ import {
   type ProjectFormData,
 } from "@/validations/project";
 
-import { sendEnquiry } from "@/actions/enquiry/sendEnquiry";
+import { createProject } from "@/actions/project/createProject";
 
-export default function StartProject() {
+export default function ProjectRequestForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -39,7 +42,7 @@ export default function StartProject() {
   });
 
   async function onSubmit(data: ProjectFormData) {
-    const result = await sendEnquiry(data);
+    const result = await createProject(data);
 
     if (!result.success) {
       alert(result.message);
@@ -48,16 +51,16 @@ export default function StartProject() {
 
     reset();
 
-    alert(
-      "Thank you! Your enquiry has been submitted successfully. We will contact you soon."
+    router.push(
+      `/project-submitted?code=${result.projectCode}`
     );
   }
 
   return (
-    <Section id="start-project" className="bg-white">
+    <Section className="min-h-screen bg-gray-50">
       <SectionTitle
-        title="Start Your Project Today"
-        subtitle="Tell us about your idea and we'll get back to you with the next steps."
+        title="Create Your Project"
+        subtitle="Submit your project details and we'll start working on your website."
       />
 
       <div className="mx-auto max-w-5xl rounded-3xl border border-gray-200 bg-white p-8 shadow-lg">
@@ -65,7 +68,6 @@ export default function StartProject() {
           onSubmit={handleSubmit(onSubmit)}
           className="grid gap-6 md:grid-cols-2"
         >
-
           {/* Full Name */}
           <div>
             <label className="mb-2 block font-medium">
@@ -235,23 +237,7 @@ export default function StartProject() {
             )}
           </div>
 
-          {/* Upload Requirement File */}
-          <div className="md:col-span-2">
-            <label className="mb-2 block font-medium">
-              Upload Requirement File (Optional)
-            </label>
-
-            <input
-              type="file"
-              className="w-full rounded-xl border border-gray-300 p-3"
-            />
-
-            <p className="mt-1 text-sm text-gray-500">
-              You can upload a PDF, image, or document containing your requirements.
-            </p>
-          </div>
-
-          {/* Submit Button */}
+          {/* Submit */}
           <div className="md:col-span-2">
             <button
               type="submit"
@@ -259,11 +245,10 @@ export default function StartProject() {
               className="w-full rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isSubmitting
-                ? "Sending Enquiry..."
-                : "🚀 Send Project Enquiry"}
+                ? "Creating Project..."
+                : "🚀 Submit Project Request"}
             </button>
           </div>
-
         </form>
       </div>
     </Section>

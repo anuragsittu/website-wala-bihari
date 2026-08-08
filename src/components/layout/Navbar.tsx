@@ -76,12 +76,12 @@ export default function Navbar() {
           </Link>
 
           {/* Start Project - Desktop Only */}
-          <Link
-            href="/#start-project"
-            className="hidden rounded-xl bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700 md:block"
-          >
-            Start Project
-          </Link>
+         <Link
+  href="/project-request"
+  className="hidden rounded-xl bg-blue-600 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-700 md:block"
+>
+  Start Project
+</Link>
 
           {/* Mobile Menu Button */}
           <button
@@ -147,12 +147,12 @@ export default function Navbar() {
 
             {/* Mobile Start Project */}
             <Link
-              href="/#start-project"
-              onClick={() => setIsOpen(false)}
-              className="rounded-xl bg-blue-600 px-5 py-3 text-center font-semibold text-white"
-            >
-              Start Project
-            </Link>
+  href="/project-request"
+  onClick={() => setIsOpen(false)}
+  className="rounded-xl bg-blue-600 px-5 py-3 text-center font-semibold text-white"
+>
+  Start Project
+</Link>
 
           </div>
         </div>

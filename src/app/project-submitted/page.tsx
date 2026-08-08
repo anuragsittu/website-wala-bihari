@@ -1,3 +1,5 @@
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 type ProjectSubmittedPageProps = {
@@ -12,6 +14,9 @@ export default async function ProjectSubmittedPage({
   const params = await searchParams;
 
   const projectCode = params.code || "Not Available";
+
+  // Check if user is logged in
+  const session = await auth();
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-blue-50 to-white px-6">
@@ -49,33 +54,55 @@ export default async function ProjectSubmittedPage({
           </p>
         </div>
 
-        {/* Track Project */}
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold text-slate-900">
-            Track Your Project
-          </h2>
+        {/* Logged In User */}
+        {session?.user ? (
+          <>
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold text-slate-900">
+                Your Project Is Ready to Track
+              </h2>
 
-          <p className="mt-2 text-sm text-slate-600">
-            Create an account or sign in to track your project,
-            view quotations, payments, files, and messages.
-          </p>
-        </div>
+              <p className="mt-2 text-sm text-slate-600">
+                You are already logged in. You can now view your project,
+                quotations, payments, files, and messages from your dashboard.
+              </p>
+            </div>
 
-        {/* Login */}
-        <Link
-          href={`/login?projectCode=${encodeURIComponent(projectCode)}`}
-          className="mt-6 flex w-full items-center justify-center rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
-        >
-          Continue to Login
-        </Link>
+            <Link
+              href="/dashboard/projects"
+              className="mt-6 flex w-full items-center justify-center rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+            >
+              Go to My Projects →
+            </Link>
+          </>
+        ) : (
+          <>
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold text-slate-900">
+                Track Your Project
+              </h2>
 
-        {/* Register */}
-        <Link
-          href={`/register?projectCode=${encodeURIComponent(projectCode)}`}
-          className="mt-3 flex w-full items-center justify-center rounded-xl border border-gray-300 py-3 font-semibold text-slate-700 transition hover:bg-gray-50"
-        >
-          Create an Account
-        </Link>
+              <p className="mt-2 text-sm text-slate-600">
+                Sign in to track your project, view quotations,
+                payments, files, and messages.
+              </p>
+            </div>
+
+            <Link
+              href={`/login?projectCode=${encodeURIComponent(projectCode)}`}
+              className="mt-6 flex w-full items-center justify-center rounded-xl bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-700"
+            >
+              Continue to Login
+            </Link>
+
+            <Link
+              href={`/register?projectCode=${encodeURIComponent(projectCode)}`}
+              className="mt-3 flex w-full items-center justify-center rounded-xl border border-gray-300 py-3 font-semibold text-slate-700 transition hover:bg-gray-50"
+            >
+              Create an Account
+            </Link>
+          </>
+        )}
 
         {/* Home */}
         <Link
