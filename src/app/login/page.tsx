@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { signIn } from "next-auth/react";
 
 function LoginForm() {
