@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { Suspense, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams();
 
   const callbackUrl =
@@ -13,14 +13,14 @@ export default function LoginPage() {
 
   async function handleGoogleLogin() {
     await signIn("google", {
-      callbackUrl: callbackUrl,
+      callbackUrl,
     });
   }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-white via-blue-50 to-white px-6">
       <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl">
-
+        {/* Logo */}
         <div className="flex justify-center">
           <Image
             src="/logo.png"
@@ -31,6 +31,7 @@ export default function LoginPage() {
           />
         </div>
 
+        {/* Heading */}
         <h1 className="mt-6 text-center text-3xl font-bold text-slate-900">
           Welcome Back
         </h1>
@@ -39,6 +40,7 @@ export default function LoginPage() {
           Sign in to manage your projects.
         </p>
 
+        {/* Google Login */}
         <button
           onClick={handleGoogleLogin}
           className="mt-8 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-300 py-3 font-semibold transition hover:bg-gray-50"
@@ -53,6 +55,7 @@ export default function LoginPage() {
           Continue with Google
         </button>
 
+        {/* Divider */}
         <div className="my-8 flex items-center">
           <div className="h-px flex-1 bg-gray-200" />
 
@@ -63,6 +66,7 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-gray-200" />
         </div>
 
+        {/* Register */}
         <p className="text-center text-sm text-slate-600">
           New to Website Wala Bihari?
         </p>
@@ -76,6 +80,7 @@ export default function LoginPage() {
           Create an Account
         </Link>
 
+        {/* Home */}
         <Link
           href="/"
           className="mt-6 block text-center text-sm text-slate-500 hover:underline"
@@ -84,5 +89,19 @@ export default function LoginPage() {
         </Link>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="flex min-h-screen items-center justify-center bg-gray-50">
+          <p className="text-slate-600">Loading...</p>
+        </main>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   );
 }
